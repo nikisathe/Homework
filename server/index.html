@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Management System</title>
+</head>
+<body>
+  <h1>College Management System</h1>
+
+  <h2>Create Assignment</h2>
+  <form id="assignmentForm">
+    <label for="title">Title:</label>
+    <input type="text" id="title" name="title">
+    <br><br>
+
+    <label for="deadline">Deadline:</label>
+    <input type="date" id="deadline" name="deadline">
+    <br><br>
+
+    <label for="description">Description:</label><br>
+    <textarea id="description" name="description"></textarea>
+    <br><br>
+
+    <label for="file">File:</label>
+    <input type="file" id="file" name="file">
+    <br><br>
+
+    <label for="createdby">Created By:</label>
+    <input type="text" id="teachername" name="teachername">
+    <br><br>
+    
+    <button type="submit">Submit</button>
+  </form>
+
+  <h2>Assignments</h2>
+  <ul id="assignmentList"></ul>
+
+  <script>
+
+    function fetchAssignments() {
+      fetch('http://localhost:3000/assignments')
+        .then(response => response.json())
+        .then(assignments => {
+          const assignmentList = document.getElementById('assignmentList');
+          assignmentList.innerHTML = ''; 
+          assignments.forEach(assignment => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+              <strong>Title:</strong> ${assignment.title}<br>
+              <strong>Deadline:</strong> ${assignment.deadline}<br>
+              <strong>Description:</strong> ${assignment.description}<br>
+            
+              <strong>Created By:</strong> ${assignment.teachername}<br>
+            `;
+            assignmentList.appendChild(li);
+          });
+        })
+        .catch(error => console.error('Error fetching assignments:', error));
+    }
+
+    
+    function handleFormSubmit(event) {
+      event.preventDefault();
+
+      const form = event.target;
+      const formData = new FormData(form);
+
+      fetch('http://localhost:3000/assignments', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        if (response.ok) {
+          form.reset(); 
+          fetchAssignments(); 
+        } else {
+          throw new Error('Failed to create assignment');
+        }
+      })
+      .catch(error => console.error('Error creating assignment:', error));
+    }
+
+    
+    const assignmentForm = document.getElementById('assignmentForm');
+    assignmentForm.addEventListener('submit', handleFormSubmit);
+
+   
+    fetchAssignments();
+  </script>
+</body>
+</html>
