@@ -12,8 +12,8 @@ const Homework = () => {
       setActiveTab(tabName);
     }
   return (
-    <div contener>
-    <div contener1>
+    <div className="container">
+    <div  className="container1">
         <div className="textimg">
             <h1 className="text">Your Homework<br></br>is here!</h1>
             <div className="img"></div>

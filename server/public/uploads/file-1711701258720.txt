@@ -1,0 +1,70 @@
+create database school;
+use school;
+ CREATE TABLE  student
+ (
+ student_id INT  ,
+ firstname VARCHAR(50) NOT NULL,
+ lastname VARCHAR(50),
+ email VARCHAR(50)  UNIQUE,
+ branch_id INT,
+  PRIMARY  KEY (student_id),
+  CONSTRAINT fkbranchid
+  FOREIGN KEY (branch_id)
+  REFERENCES branch(branch_id) 
+);
+SELECT *FROM student;
+ INSERT INTO student VALUES(1, 'manav', 'sharma','shram@gmail.com',100);
+ INSERT INTO student  VALUES(2, 'manish', 'shar','shra@gmail.com',101);
+ INSERT INTO student  VALUES(3, 'mahesh', 'sathe','sathe@gmail.com',102);
+ INSERT INTO student  VALUES(4, 'aadi', 'salve','salve@gmail.com',103);
+ #foreign key 
+ INSERT INTO student  VALUES(5, 'mahesh', 'sathe','seoe@gmail.com',122);
+ #email unique single value null accept another null vlaue not accept 
+  INSERT INTO student(student_id, firstname, branch_id) VALUES(5, 'nikita',102);
+  INSERT INTO student(student_id, firstname,email, branch_id) VALUES(6, 'nikita','nikita@gmail.com',102);
+ CREATE TABLE branch
+ (
+ branch_id INT ,
+ branchname varchar(10),
+ capacity INT  DEFAULT 200,
+ PRIMARY KEY (branch_id) 
+ );
+ ALTER TABLE branch 
+ ADD CHECK(branchname IN ('EE', 'CSE', 'ECS', 'ME', 'IT'));
+ 
+ INSERT INTO branch VALUES(100, 'EE',200);
+ INSERT INTO branch VALUES(101, 'CSE',200);
+ INSERT INTO branch VALUES(102, 'ECS',150);
+ INSERT INTO branch VALUES(103, 'ME',150);
+ INSERT INTO branch(branch_id,branchname) VALUES(106, 'EE');
+ INSERT INTO branch VALUES(107, 'RE',150);
+ select* from branch;
+ UPDATE  branch
+ SET branchname = 'EE'
+ WHERE branch_id = 107; 
+  
+ 
+ #SCHEMA
+ CREATE SCHEMA engineering;
+CREATE SCHEMA management;
+CREATE TABLE engineering. test
+( 
+test_id INT );
+CREATE TABLE management. test
+( 
+test_id INT );
+ALTER SCHEMA management 
+TRANSFERS engineering. test;
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  
+ 

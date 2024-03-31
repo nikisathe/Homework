@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios'; // Import axios for making HTTP requests
 
-const TeacherForm = () => {
+const StudentForm = () => {
   const [formData, setFormData] = useState({
     title: '',
     submissiondate: '',
     description: '',
-    file: null,
-    submitedby: ''
+    file: '',
+    submitedby: '',
+    filename: ''
   });
 
   const handleChange = (e) => {
@@ -20,7 +21,8 @@ const TeacherForm = () => {
   const handleFileChange = (e) => {
     setFormData({
       ...formData,
-      file: e.target.files[0]
+      file: e.target.files[0],
+      filename: e.target.files[0].name 
     });
   };
 
@@ -34,22 +36,23 @@ const TeacherForm = () => {
     formDataToSend.append('description', formData.description);
     formDataToSend.append('file', formData.file);
     formDataToSend.append('submitedby', formData.submitedby);
-
+    formDataToSend.append('filename', formData.filename);
     try {
       // Send POST request to server
-      const response = await axios.post('http://localhost:3001/submit', formDataToSend, {
+       await axios.post('http://localhost:3001/submit', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
-      console.log(response.data);
+      console.log('Assignment submitted successfully');
       // Reset form after successful submission
       setFormData({
         title: '',
         submissiondate: '',
         description: '',
         file: '',
-        submitedby: ''
+        submitedby: '',
+        filename:'',
       });
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -73,11 +76,15 @@ const TeacherForm = () => {
         <br /><br />
 
         <label htmlFor="file">File:</label>
-        <input type="file" id="file" name="file" onChange={handleFileChange} />
+        <input type="file" id="file" name="file"   onChange={handleFileChange} />
         <br /><br />
 
+        <label htmlFor="filename">Filename:</label> {/* Add filename field */}
+        <input type="text" id="filename" name="filename" value={formData.filename} onChange={handleChange} />
+        <br /><br />
+        
         <label htmlFor="submitedby">submited By:</label>
-        <input type="text" id="submitedby" name="submitedby" value={formData.createdby} onChange={handleChange} />
+        <input type="text" id="submitedby" name="submitedby" value={formData.submitedby} onChange={handleChange} />
         <br /><br />
 
         <button type="submit">Submit</button>
@@ -86,4 +93,4 @@ const TeacherForm = () => {
   );
 }
 
-export default TeacherForm;
+export default StudentForm;

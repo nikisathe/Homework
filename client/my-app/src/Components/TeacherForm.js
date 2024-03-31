@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const TeacherForm = () => {
-  const [assignments, setAssignments] = useState([]);
   const [formData, setFormData] = useState({
     title: '',
     deadline: '',
     description: '',
-    file: null,
-    createdby: ''
+    file: '',
+    createdby: '',
+    filename:''
   });
 
   const handleChange = (e) => {
@@ -21,7 +21,8 @@ const TeacherForm = () => {
   const handleFileChange = (e) => {
     setFormData({
       ...formData,
-      file: e.target.files[0]
+      file: e.target.files[0],
+      filename: e.target.files[0].name
     });
   };
 
@@ -34,44 +35,61 @@ const TeacherForm = () => {
     formDataToSend.append('description', formData.description);
     formDataToSend.append('file', formData.file);
     formDataToSend.append('createdby', formData.createdby);
+    formDataToSend.append('filename', formData.filename);
 
     try {
-      const response = await axios.post('http://localhost:3001/assignment', formDataToSend, {
+       await axios.post('http://localhost:3001/assignment', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
-      console.log(response.data);
+      console.log('Assignment submitted successfully');
+      // Reset form data after successful submission
       setFormData({
         title: '',
         deadline: '',
         description: '',
-        file: null,
-        createdby: ''
+        file: '',
+        createdby: '' ,
+        filename: ''
       });
     } catch (error) {
       console.error('Error submitting form:', error);
     }
   };
 
-  const fetchAssignments = async () => {
-    try {
-      const response = await axios.get("http://localhost:3001/submitted");
-      setAssignments(response.data);
-    } catch (error) {
-      console.error("Error fetching assignments:", error);
-    }
-  };
+  const [assignments, setAssignments] = useState([]);
 
   useEffect(() => {
     fetchAssignments();
   }, []);
 
-  const formatDate = (dateTimeString) => {
-    const dateTime = new Date(dateTimeString);
-    return dateTime.toLocaleDateString("en-US", { timeZone: "UTC" });
+  const fetchAssignments = async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/submitted');
+      setAssignments(response.data);
+    } catch (error) {
+      console.error('Error fetching assignments:', error);
+    }
   };
 
+  const formatDate = (dateTimeString) => {
+    const dateTime = new Date(dateTimeString);
+    return dateTime.toLocaleDateString('en-US', { timeZone: 'UTC' });
+  };
+
+  const downloadFile = (fileData, filename) => {
+    const blob = new Blob([new Uint8Array(fileData.data)], { type: 'application/octet-stream' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+ 
   return (
     <div>
       <h2>Create Assignment</h2>
@@ -92,6 +110,10 @@ const TeacherForm = () => {
         <input type="file" id="file" name="file" onChange={handleFileChange} />
         <br /><br />
 
+        <label htmlFor="filename">Filename:</label> {/* Add filename field */}
+        <input type="text" id="filename" name="filename" value={formData.filename} onChange={handleChange} />
+        <br /><br />
+
         <label htmlFor="createdby">Created By:</label>
         <input type="text" id="createdby" name="createdby" value={formData.createdby} onChange={handleChange} />
         <br /><br />
@@ -99,7 +121,7 @@ const TeacherForm = () => {
         <button type="submit">Submit</button>
       </form>
 
-      
+
       <div className="assignment-list">
         {assignments.map((assignment, index) => (
           <div key={index} className="assignment-item">
@@ -107,7 +129,9 @@ const TeacherForm = () => {
             <p>Title: {assignment.title}</p>
             <p>Submission Date: {formatDate(assignment.submission_date)}</p>
             <p>Submitted By: {assignment.submitted_by}</p>
-            <p>File: {assignment.file}</p>
+            <button onClick={() => downloadFile(assignment.file, assignment.filename)}>
+            Download File
+          </button>
             <p>Description: {assignment.description}</p>
           </div>
         ))}
