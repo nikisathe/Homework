@@ -72,37 +72,7 @@ app.post('/assignment', upload.single('file'), (req, res) => {
         }
     });
 });
-// app.get('/assignments', (req,res) =>{
-//     const sql = 'SELECT * FROM assignment';
-//     techerrecord_connection.query(sql, (err, result) =>{
-//         if(err){
-//             res.status(500).send({
-//                 error: 'Error fetching assignments'
-//             });
-//         }else{
-//             res.json(result);
-//         }
-//     });
-// });
 
-// app.post('/assignment', upload.single('file'), (req, res)=> {
-//     const { deadline,title,createdby,description } = req.body;
-//     const file = req.file.buffer;
-
-//      const sql = 'INSERT INTO assignment (deadline, title, file, `created_by`, description) VALUES (?, ?, ?, ?, ?)';
-
-//     techerrecord_connection.query(sql, [deadline,title,file,createdby,description], (err, result) => {
-//         if(err) {
-//             console.error('Error creating assignment:', err);
-//             return res.status(400).send({
-//                 error: 'Failed to add the data'
-//             });
-//         } else {
-//             console.log('Assignment created successfully');
-//             res.status(201).send({ message: 'Assignment created successfully'});
-//         }
-//     });
-// });
 
 app.get('/submitted', (req,res) =>{
     const sql = 'SELECT * FROM ass_submit';
@@ -136,30 +106,6 @@ app.post('/submit', upload.single('file'), (req, res)=> {
         }
     });
 });
-
-//------------------------------------
-
-// app.get('/assignment', (req, res) => {
-//     const assignmentId = req.params.asg_id;
-  
-//     db.query('SELECT file FROM assignment WHERE asg_id = ?', [assignmentId], (err, results) => {
-//       if (err) {
-//         console.error('Error fetching file data:', err);
-//         res.status(500).json({ error: 'Internal Server Error' });
-//       } else {
-//         if (results.length === 0 || !results[0].file_data) {
-//           res.status(404).json({ error: 'File not found' });
-//         } else {
-
-//             res.setHeader('Content-disposition', 'attachment; filename=file');
-//           res.setHeader('Content-type', 'application/octet-stream');
-//           res.send(results[0].file_data);
-//         }
-//       }
-//     });
-//   });
-  
-
 
 
 
